@@ -1,1 +1,3 @@
 step,images,minutes,note
+gold_manual,4,23,"5:40-6:03 gán tay CVAT, không AI; 88 đối tượng"
+gold_fix,4,10,"sửa tay theo mục 4.1.6: bỏ box < 20 px / gộp cụm vào ignore_region; còn 62 đối tượng"

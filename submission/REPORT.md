@@ -71,6 +71,10 @@ Nếu Rework / Hold, việc cần làm tiếp: <<>>
 
 - **Dùng AI để làm bài** (công cụ nào, việc gì, kiểm tra thế nào; "không dùng" nếu không): <<>>
 - Gold có bị nhiễm không (bạn có nhìn pre-label hay hỏi AI trước khi gán xong)? <<không / có, như sau: ...>>
+- Ca `can_review` khi gán gold (ghi lúc gán, <<viết lại bằng lời của bạn>>):
+  - img_001: person nghi là bóng người (thấy đen, không chắc là người hay bóng).
+  - img_036: motorbike bị gương chiếu hậu / xe khác che một phần, chỉ chắc ~70–80% là xe máy.
+- Sửa gold (`gold_fix`, 10 phút): lần đầu gán cả vật cao < 20 px (88 đối tượng, 25 `can_review`); sửa theo mục 4.1.6 còn 62 đối tượng. Còn giữ 3 box 16.9–19.8 px vì <<lý do của bạn>>.
 - Máy / GPU / CVAT dùng; vướng mắc cài đặt: <<>>
 - Dùng cache `data/cache/` thay vì tự chạy? <<không / có, vì ...>>
 - Lỗi / bug script đã gặp (nếu có): <<>>
