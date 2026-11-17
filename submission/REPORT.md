@@ -48,7 +48,7 @@
 | <<img_0xx>> | <<>> | <<>> | <<>> | <<>> | <<>> |
 
 - Đối chiếu guideline mục 4.2: quy tắc nào giúp, quy tắc nào thiếu? <<>>
-- *(Tuỳ chọn)* Interactor SAM trong CVAT: làm được / không (lỗi gì, đã thử gì); khác gì offline: <<>>
+- *(Tuỳ chọn)* Interactor SAM trong CVAT: không làm được vì CVAT Docker (v2.82.1) chưa cài serverless (Nuclio), menu Models không có model nào; đã thử chuẩn bị deploy hàm SAM (`serverless/pytorch/facebookresearch/sam`) nhưng dừng ở bước cài `nuctl`. Thay bằng `scripts/sam2_points.py` (SAM 2.1 base, click dương/âm) để mô phỏng Interactor.
 
 ## 6. Calibration (Part 6)
 
