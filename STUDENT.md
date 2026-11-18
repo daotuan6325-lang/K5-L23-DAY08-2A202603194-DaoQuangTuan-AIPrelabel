@@ -16,4 +16,4 @@
 - Bắt bẫy: 5/12 = 41.7%
 - Thời gian: gán tay 5.75 phút/ảnh (23 phút / 4 ảnh); duyệt có pre-label 1.25 phút/ảnh (30 phút / 24 ảnh)
 - Lỗi QC: 28.6% theo ảnh (2/7), 2.0% theo đối tượng (3/149)
-- **Quyết định:** <<Release / Hold / Rework>> — lý do một dòng: <<...>>
+- **Quyết định:** Rework — lý do một dòng: ảnh lỗi 2/7 = 28.6% > 2%, bắt bẫy 5/12 = 41.7% < 80%, lỗi lặp là bỏ sót (3/3 lỗi QC).
