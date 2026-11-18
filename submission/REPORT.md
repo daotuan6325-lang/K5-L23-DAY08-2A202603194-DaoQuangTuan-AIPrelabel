@@ -7,10 +7,10 @@
 | Lớp | Model + cỡ | Ngưỡng | Vì sao (dẫn `run_id` trong `model_log.csv`) |
 |---|---|---|---|
 | person / bicycle / motorbike / car / bus / truck | YOLO26m | person = 0.25 (sweep: recall 20/22 = 91%, precision 20/29 = 69%); các lớp khác mặc định 0.3 (motorbike, car: không ngưỡng nào ≤ 0.5 đạt recall 90%; bicycle, truck, bus: < 5 vật trong gold) | Chọn 0.25 thay vì 0.5: ở r03 (0.5) img_002 mất 4 người nhỏ / bị che mà không lọc thêm được box sai nào (r02 → r03); sweep cho thấy person ở 0.25 đạt recall 91%, ở 0.5 chỉ 14/22 = 64%. |
-| three_wheeler | YOLOE-26s, prompt: "tuk-tuk", "cyclo", "cargo tricycle" | 0.15 (sweep: recall 7/7 = 100%, precision 7/9 = 78%; ở 0.5 recall chỉ 3/7 = 43%) | Ở r04 tôi định dùng 0.5–0.6 để bỏ box rác, nhưng sweep cho thấy ở 0.5 máy chỉ tìm được 3/7 xe ba bánh trong gold, và ở img_032 xích lô thật chỉ được 0.48 và 0.27, nên đổi sang 0.15. |
+| three_wheeler | YOLOE-26s, prompt: "tuk-tuk", "cyclo", "cargo tricycle" (so với r09 chỉ "auto rickshaw": hết box rác nhưng mất cả 3 xích lô img_032 và tuk-tuk giảm 0.93 → 0.56, nên giữ bộ 3 prompt) | 0.15 (sweep: recall 7/7 = 100%, precision 7/9 = 78%; ở 0.5 recall chỉ 3/7 = 43%) | Ở r04 tôi định dùng 0.5–0.6 để bỏ box rác, nhưng sweep cho thấy ở 0.5 máy chỉ tìm được 3/7 xe ba bánh trong gold, và ở img_032 xích lô thật chỉ được 0.48 và 0.27, nên đổi sang 0.15. |
 
 - Lệnh `merge_prelabels.py` đã dùng (dán nguyên): `python scripts/merge_prelabels.py work/prelabel/yoloe_all/pre.coco.json work/prelabel/y26_all/pre.coco.json --thr "person=0.25,three_wheeler=0.15" --conf 0.3 --iou 0.6 --split "batch,gold" --out work/prelabel/merged_review/pre.coco.json` → 633 box; 11 box `car` và 6 box `truck` của YOLO26 bị loại vì chồng lên box `three_wheeler` của YOLOE.
-- **Phiên bản SAM bạn chọn**: SAM 2.1 base (`sam2.1_b.pt`). Lý do: máy có GPU (GTX 1650) nên chạy được bản base, 3.37 s/ảnh ở r05, mask đẹp hơn SAM 1 (mobile_sam).
+- **Phiên bản SAM bạn chọn**: SAM 2.1 base (`sam2.1_b.pt`). Lý do: máy có GPU (GTX 1650) nên chạy được bản base, 3.37 s/ảnh ở r05, mask liền một khối, phủ đủ xe. So với SAM 1 (r08, cùng 3 click trên img_013): SAM 1 nghe click âm tốt hơn (không tô người lái và khách) nhưng mask bị tách 2 polygon và lấm tấm; chỉ 1 ảnh nên tôi vẫn giữ SAM 2.1 làm lựa chọn chính.
 - Lỗi nào **không sửa được bằng đổi ngưỡng** (ví dụ tuk-tuk bị gọi `car`)? Sửa thế nào? Tuk-tuk bị YOLO26 gọi `car` (img_013 `car` 0.42) vì COCO không có lớp xe ba bánh: tăng hay giảm ngưỡng chỉ làm box `car` đó còn hoặc mất, không bao giờ thành `three_wheeler` (sweep: `car` vẫn 7 box sai ở mọi ngưỡng ≤ 0.25). Sửa bằng đổi model: dùng YOLOE cho `three_wheeler`, lúc merge 11 box `car` và 6 box `truck` của YOLO26 bị thay.
 - Box **điểm cao mà sai** hoặc **điểm thấp mà đúng** (ảnh nào): Điểm cao mà sai: img_002 bán tải bị gán `truck` 0.73. Điểm thấp mà đúng: img_032 hai xích lô thật chỉ được 0.48 và 0.27 (YOLOE).
 - Giới hạn: chọn ngưỡng trên chính gold (4 ảnh) nên số đo máy trên gold là lạc quan: tôi tin ngưỡng này ít, vì chỉ có 4 ảnh, `three_wheeler` chỉ 7 vật nằm trong 2 ảnh, và ngưỡng được chọn rồi chấm trên cùng dữ liệu nên precision / recall trên gold là lạc quan.
@@ -24,7 +24,7 @@
 | deleted | 24 | 24/544 = 4.4% | 544 box máy |
 | added | 18 | 18/526 = 3.4% | 526 đối tượng sau duyệt |
 
-(Đã loại 23 đối tượng quanh vùng bẫy khỏi bảng. Trong deleted + added có 5 ca đổi lớp; máy sót thật ≈ 18 − 5 = 13.)
+(Đã loại 23 đối tượng quanh vùng bẫy khỏi bảng: bẫy là lỗi nhân tạo do script cài vào, không phải lỗi máy thật; nếu tính vào thì accepted / edited / deleted / added phản ánh lỗi giả. Bẫy được đo riêng (5/12) để đánh giá người review, còn profile đánh giá máy. Trong deleted + added có 5 ca đổi lớp; máy sót thật ≈ 18 − 5 = 13.)
 
 - Lớp nào máy tệ nhất? Vì sao (dẫn ảnh)? three_wheeler: accepted 13, edited 7, deleted 17, added 2. Lỗi nhiều nhất là box thừa: ngưỡng YOLOE 0.15 rất thấp nên bắt nhầm vật không phải xe ba bánh (như ở r04: xe đẩy hàng 0.40 và bán tải 0.37 ở img_002, box rác dọc mép img_011).
 - So với gold: precision / recall của **máy** 44/64 = 68.8% (KTC 95%: 57–79%) / 44/54 = 81.5% (KTC 95%: 69–90%) (mẫu số: 54 đối tượng gold)
@@ -49,6 +49,7 @@
 |---|---|---|---|---|---|
 | img_013 (tuk-tuk có người lái + khách) | SAM 2.1 base | 3 (2 dương, 1 âm lên người lái) | Một phần: tô phần lớn người lái dù đã click âm, và cả khách / người nhìn qua khung hở | Mask phủ đủ cả xe, nhưng 1 click âm không đủ tách người ra khỏi xe | `tuktuk_img013.jpg` (mask 45.4% ảnh) |
 | img_004 (tuk-tuk xanh dương YOLO26 bỏ sót) | SAM 2.1 base | 4 (3 dương, 1 âm lên người áo đen) | Không: người áo đen không bị tô | Ôm trọn chiếc tuk-tuk xanh; không lỗi rõ | `tuktuk_blue_img004.jpg` (mask 13.3% ảnh) |
+| img_013 (so sánh SAM 1) | SAM 1 mobile_sam | 3 (cùng click với dòng SAM 2.1) | Không tô người lái (áo, quần) và khách phía sau khung hở; còn lấm tấm ở mặt, bàn chân | Mask tách 2 polygon; 35.2% ảnh so với 45.4% của SAM 2.1 | `tuktuk_img013_sam1.jpg` |
 | img_032 (xích lô) | SAM 2.1 base | 4 (3 dương, 1 âm lên người đội mũ trắng) | Không: người đội mũ trắng không bị tô | Phần trong vành bánh (giữa nan hoa) bị tô; yên người đạp và bánh sau không thấy rõ trong ảnh nên không đánh giá được | `xichlo_img032.jpg` (mask 8.6% ảnh) |
 
 - Đối chiếu guideline mục 4.2: quy tắc nào giúp, quy tắc nào thiếu? Quy tắc lỗ thủng (4.2.2) và bóng đổ (4.2.3) giúp đánh giá mask, nhưng 4.2 chưa nói rõ phần nhìn xuyên qua kính / khung hở của tuk-tuk (img_013 mask tô cả người và khách phía sau) nên tôi thêm CAL-04.
