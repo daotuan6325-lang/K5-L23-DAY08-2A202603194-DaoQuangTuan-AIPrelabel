@@ -5,7 +5,7 @@
 - Lớp (L2 / L3 / khác): L2A
 - Tài khoản GitHub: daotuan6325-lang
 - Repo bài nộp (URL): https://github.com/daotuan6325-lang/K5-L23-DAY08-2A202603194-DaoQuangTuan-AIPrelabel
-- Commit chốt bài (hash): <<>>
+- Commit chốt bài (hash): d403c70
 - Máy: Windows 11 Home, GPU NVIDIA GeForce GTX 1650 4 GB (CUDA), Python 3.13.5
 - CVAT (Docker): v2.82.1
 
